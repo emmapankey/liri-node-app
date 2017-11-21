@@ -1,0 +1,24 @@
+{
+  "name": "liri-node-app",
+  "version": "1.0.0",
+  "description": "command line nodejs app",
+  "main": "liri.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emmapankey/liri-node-app.git"
+  },
+  "author": "Emma Pankey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emmapankey/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/emmapankey/liri-node-app#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "request": "^2.83.0",
+    "twitter": "^1.7.1"
+  }
+}
