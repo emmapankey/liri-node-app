@@ -1,10 +1,10 @@
 // INSTRUCTIONS:
 
-// In the terminal type one of the following commands after typing node liri.js
-    // 1) show-tweets 'twitter username' (Username can be any existing twitter name. If no username is entered the default value is my username.)
-    // 2) spotify-this-song 'name of a song' (If no song name is entered the default value is "The Sign" by Ace of Base.)
-    // 3) movie-this 'title of a movie' (If no movie title is entered the default value is "Mr. Nobody".)
-    // 4) do-what-it-says
+// In the terminal type one of the following commands:
+// 1) node liri.js show-tweets '<twitter username here>' (Username can be any existing twitter name. If no username is entered the default value is my username.)
+// 2) node liri.js spotify-this-song '<song name here>' (If no song name is entered the default value is "The Sign" by Ace of Base.)
+// 3) node liri.js movie-this '<movie title here' (If no movie title is entered the default value is "Mr. Nobody".)
+// 4) node liri.js do-what-it-says
 
 //<-------------------------------------------------------------------------------------------------------------------------->
 
@@ -39,9 +39,9 @@ function twitterFunction() {
     var keys = require("./keys");
 
     // Import the Twitter node module
-    var twitter = require('twitter');
+    var Twitter = require('twitter');
 
-    var client = new twitter({
+    var client = new Twitter({
         consumer_key: keys.consumer_key,
         consumer_secret: keys.consumer_secret,
         access_token_key: keys.access_token_key,
@@ -77,7 +77,34 @@ function twitterFunction() {
 function spotifyFunction() {
 
     // Import the Spotify node module
-    var spotify = require('spotify');
+    var Spotify = require('node-spotify-api');
+
+    var client = new Spotify({
+        id: "10f444a500c142e8bd3097a0dbf67851",
+        secret: "387e700e1d5a447e8498ea09632652a5"
+    });
+
+    var songTitle = process.argv[3];
+
+    if (!songTitle) {
+        songTitle = "The Sign";
+    }
+
+    client.search({ type: 'track', query: songTitle })
+    .then(function(response) {
+        var songData = response.tracks.items;
+        for(var i =0; i < 1; i++) {
+            var spotifyResults = "Artist: " + songData[i].artists[0].name + "\n" + "\n" +
+                "Song Name: " + songData[i].name + "\n" + "\n" +
+                "Album: " + songData[i].album.name + "\n" + "\n" +
+                "Preview URL: " + songData[i].preview_url + "\n";
+            console.log(spotifyResults);
+        }
+    })
+    .catch(function(err) {
+        console.log(err);
+    })
+    
 }
 
 // Calls the omdb API using a movie title and returns specified data about the movie
