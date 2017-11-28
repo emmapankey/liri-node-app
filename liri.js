@@ -1,19 +1,13 @@
-// Load the fs package to read and write
-var fs = require("fs");
-
-// Include the request npm package
-var request = require("request");
-
 var liriArgument = process.argv[2];
 
 if (liriArgument == "show-tweets") {
-    twitterFunction();
+    twitterFunction(process.argv[3]);
 }
 else if (liriArgument == "spotify-this-song") {
-    spotifyFunction();
+    spotifyFunction(process.argv[3]);
 }
 else if (liriArgument == "movie-this") {
-    omdbFunction();
+    omdbFunction(process.argv[3]);
 }
 else if (liriArgument == "do-what-it-says") {
     doWhatItSaysFunction();
@@ -23,7 +17,7 @@ else {
 }
 
 // Calls the Twitter API and returns a user's 20 prior tweets
-function twitterFunction() {
+function twitterFunction(arr) {
 
     // Grab twitter keys from keys.js file
     var keys = require("./keys");
@@ -38,7 +32,7 @@ function twitterFunction() {
         access_token_secret: keys.access_token_secret
     });
 
-    var username = process.argv[3];
+    username = arr;
 
     if (!username) {
         username = "emmapankey19";
@@ -54,7 +48,7 @@ function twitterFunction() {
         else if (!error && response.statusCode === 200) {
             for (var i = 0; i < data.length; i++) {
                 // console.log(response);
-                var tweetData = username + ":" + "\n" + data[i].created_at + "\n" + data[i].text + "\n" +
+                var tweetData = "User: " + username + "\n" + "Created on: " + data[i].created_at + "\n" + "\n" + data[i].text + "\n" +
                     "-------------------------------------------------------------------------------------"
                 console.log(tweetData);
             }
@@ -63,10 +57,10 @@ function twitterFunction() {
 
 }
 
-// Calls the Spotify API and 
-function spotifyFunction() {
+// Calls the Spotify API and returns data about a searched song
+function spotifyFunction(arr) {
 
-    // Import the Spotify node module and returns song data
+    // Import the Spotify node module
     var Spotify = require('node-spotify-api');
 
     var client = new Spotify({
@@ -74,33 +68,37 @@ function spotifyFunction() {
         secret: "387e700e1d5a447e8498ea09632652a5"
     });
 
-    var songTitle = process.argv[3];
+    songTitle = arr;
 
+    // If no track is specified the search is defaulted to "The Sign" by Ace of Base
     if (!songTitle) {
-        songTitle = "The Sign";
+        songTitle = "The Sign Ace of Base";
     }
 
     client.search({ type: 'track', query: songTitle })
-    .then(function(response) {
-        var songData = response.tracks.items;
-        for(var i =0; i < 1; i++) {
-            var spotifyResults = "Artist: " + songData[i].artists[0].name + "\n" + "\n" +
-                "Song Name: " + songData[i].name + "\n" + "\n" +
-                "Album: " + songData[i].album.name + "\n" + "\n" +
-                "Preview URL: " + songData[i].preview_url + "\n";
-            console.log(spotifyResults);
-        }
-    })
-    .catch(function(err) {
-        console.log(err);
-    })
-    
+        .then(function (response) {
+            var songData = response.tracks.items;
+            for (var i = 0; i < 1; i++) {
+                var spotifyResults = "Artist: " + songData[i].artists[0].name + "\n" + "\n" +
+                    "Song Name: " + songData[i].name + "\n" + "\n" +
+                    "Album: " + songData[i].album.name + "\n" + "\n" +
+                    "Preview URL: " + songData[i].preview_url + "\n";
+                console.log(spotifyResults);
+            }
+        })
+        .catch(function (err) {
+            console.log(err);
+        })
+
 }
 
 // Calls the omdb API using a movie title and returns specified data about the movie
-function omdbFunction() {
+function omdbFunction(arr) {
 
-    var movieTitle = process.argv[3];
+    // Include the request npm package
+    var request = require("request");
+
+    movieTitle = arr;
 
     if (!movieTitle) {
         movieTitle = "Mr. Nobody";
@@ -132,6 +130,39 @@ function omdbFunction() {
     });
 }
 
+// Reads random.txt and executes a command specified in that file
 function doWhatItSaysFunction() {
-    console.log("do what it says");
+
+    // Load the fs package to read and write
+    var fs = require("fs");
+
+    fs.readFile("random.txt", "utf8", function (error, data) {
+
+        if (error) {
+            console.log("Error reading random.txt" + error);
+            return;
+        }
+        else if (!error) {
+            var doWhatItSayString = data.split(",");
+            var command = doWhatItSayString[0].trim();
+            var param = doWhatItSayString[1].trim();
+
+            switch (command) {
+
+                case 'show-tweets':
+                    twitterFunction(param);
+                    break;
+
+                case 'spotify-this-song':
+                    spotifyFunction(param);
+                    break;
+
+                case 'movie-this':
+                    omdbFunction(param);
+                    break;
+            }
+        }
+
+
+    })
 }
