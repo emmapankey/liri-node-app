@@ -27,7 +27,7 @@ npm -v
 ```
 
 
-## Installing Node Packages
+#### Installing Node Packages
 
 
 In the terminal execute the following command to install all node dependencies (see package.json for list):
